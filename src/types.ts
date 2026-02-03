@@ -211,6 +211,10 @@ export interface Settings {
   // Windows: "cmd" | "powershell" | "wt"
   // Linux: "gnome-terminal" | "konsole" | "xfce4-terminal" | "alacritty" | "kitty" | "ghostty"
   preferredTerminal?: string;
+
+  // ===== 终端工作目录设置 =====
+  // 终端工作目录（打开终端时 cd 到此目录，所有应用共用）
+  terminalWorkingDir?: string;
 }
 
 export interface SessionMeta {

@@ -56,6 +56,7 @@ import { UniversalProviderPanel } from "@/components/universal";
 import { McpIcon } from "@/components/BrandIcons";
 import { Button } from "@/components/ui/button";
 import { SessionManagerPage } from "@/components/sessions/SessionManagerPage";
+import { WorkingDirSelector } from "@/components/providers/WorkingDirSelector";
 
 type View =
   | "providers"
@@ -119,7 +120,7 @@ function App() {
   }, [currentView]);
 
   // Get settings for visibleApps
-  const { data: settingsData } = useSettingsQuery();
+  const { data: settingsData, refetch: refetchSettings } = useSettingsQuery();
   const visibleApps: VisibleApps = settingsData?.visibleApps ?? {
     claude: true,
     codex: true,
@@ -528,7 +529,9 @@ function App() {
   // 打开提供商终端
   const handleOpenTerminal = async (provider: Provider) => {
     try {
-      await providersApi.openTerminal(provider.id, activeApp);
+      // 从 settings 获取工作目录
+      const workingDir = settingsData?.terminalWorkingDir;
+      await providersApi.openTerminal(provider.id, activeApp, workingDir);
       toast.success(
         t("provider.terminalOpened", {
           defaultValue: "终端已打开",
@@ -543,6 +546,22 @@ function App() {
         }) + (errorMessage ? `: ${errorMessage}` : "")
       );
     }
+  };
+
+  // 浏览工作目录
+  const handleBrowseWorkingDir = async () => {
+    const { open } = await import("@tauri-apps/plugin-dialog");
+    const selected = await open({ directory: true, multiple: false });
+    if (selected) {
+      await settingsApi.update({ terminalWorkingDir: selected as string });
+      await refetchSettings();
+    }
+  };
+
+  // 清除工作目录
+  const handleClearWorkingDir = async () => {
+    await settingsApi.update({ terminalWorkingDir: undefined });
+    await refetchSettings();
   };
 
   // 导入配置成功后刷新
@@ -661,9 +680,7 @@ function App() {
                       onDuplicate={handleDuplicateProvider}
                       onConfigureUsage={setUsageProvider}
                       onOpenWebsite={handleOpenWebsite}
-                      onOpenTerminal={
-                        activeApp === "claude" ? handleOpenTerminal : undefined
-                      }
+                      onOpenTerminal={handleOpenTerminal}
                       onCreate={() => setIsAddOpen(true)}
                     />
                   </motion.div>
@@ -926,6 +943,12 @@ function App() {
             )}
             {currentView === "providers" && (
               <>
+                <WorkingDirSelector
+                  value={settingsData?.terminalWorkingDir}
+                  onBrowse={handleBrowseWorkingDir}
+                  onClear={handleClearWorkingDir}
+                />
+
                 {activeApp !== "opencode" && (
                   <>
                     <ProxyToggle activeApp={activeApp} />

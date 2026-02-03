@@ -69,6 +69,13 @@
     "enterEditMode": "Enter Edit Mode",
     "exitEditMode": "Exit Edit Mode"
   },
+  "workingDir": {
+    "label": "Working Directory",
+    "notSet": "Not set",
+    "browse": "Browse",
+    "clear": "Clear",
+    "tooltip": "Working directory when terminal launches"
+  },
   "provider": {
     "tabProvider": "Provider",
     "tabUniversal": "Universal",

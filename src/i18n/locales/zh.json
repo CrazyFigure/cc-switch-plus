@@ -69,6 +69,13 @@
     "enterEditMode": "进入编辑模式",
     "exitEditMode": "退出编辑模式"
   },
+  "workingDir": {
+    "label": "工作目录",
+    "notSet": "未设置",
+    "browse": "选择目录",
+    "clear": "清除",
+    "tooltip": "终端启动时的工作目录"
+  },
   "provider": {
     "tabProvider": "供应商",
     "tabUniversal": "统一供应商",

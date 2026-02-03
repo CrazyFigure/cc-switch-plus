@@ -69,6 +69,13 @@
     "enterEditMode": "編集モードに入る",
     "exitEditMode": "編集モードを終了"
   },
+  "workingDir": {
+    "label": "作業ディレクトリ",
+    "notSet": "未設定",
+    "browse": "選択",
+    "clear": "クリア",
+    "tooltip": "ターミナル起動時の作業ディレクトリ"
+  },
   "provider": {
     "tabProvider": "プロバイダー",
     "tabUniversal": "統一プロバイダー",

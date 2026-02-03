@@ -125,6 +125,11 @@ pub struct AppSettings {
     /// - Linux: "gnome-terminal" | "konsole" | "xfce4-terminal" | "alacritty" | "kitty" | "ghostty"
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub preferred_terminal: Option<String>,
+
+    // ===== 终端工作目录设置 =====
+    /// 终端工作目录（打开终端时 cd 到此目录，所有应用共用）
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub terminal_working_dir: Option<String>,
 }
 
 fn default_show_in_tray() -> bool {
@@ -156,6 +161,7 @@ impl Default for AppSettings {
             current_provider_opencode: None,
             skill_sync_method: SyncMethod::default(),
             preferred_terminal: None,
+            terminal_working_dir: None,
         }
     }
 }
