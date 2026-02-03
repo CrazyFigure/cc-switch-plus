@@ -1,0 +1,47 @@
+name: Generate Signing Key
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  generate-key:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install tauri-cli
+        run: cargo install tauri-cli
+
+      - name: Generate signing key pair
+        run: |
+          echo "生成 Tauri 签名密钥对..."
+          cargo tauri signer generate -w tauri.key
+
+          echo ""
+          echo "=========================================="
+          echo "           密钥生成完成！"
+          echo "=========================================="
+          echo ""
+          echo "📋 公钥 (Public Key) - 用于 tauri.conf.json:"
+          echo "----------------------------------------"
+          cat tauri.key.pub
+          echo ""
+          echo "----------------------------------------"
+          echo ""
+          echo "🔐 私钥 (Private Key) - 用于 GitHub Secret:"
+          echo "----------------------------------------"
+          cat tauri.key
+          echo ""
+          echo "----------------------------------------"
+          echo ""
+          echo "⚠️  重要步骤："
+          echo "1. 复制上面的私钥内容"
+          echo "2. 前往仓库 Settings > Secrets and variables > Actions"
+          echo "3. 创建名为 TAURI_SIGNING_PRIVATE_KEY 的 Secret"
+          echo "4. 将私钥内容粘贴进去"
+          echo ""
+          echo "5. 如果公钥与 tauri.conf.json 中的不同，需要更新 pubkey 字段"
