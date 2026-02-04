@@ -503,7 +503,7 @@ pub async fn open_provider_terminal(
 
     // 获取工作目录：优先使用传入的，否则从 settings 读取
     let working_dir = workingDir.or_else(|| {
-        crate::settings::load().ok().and_then(|s| s.terminal_working_dir)
+        crate::settings::get_settings().terminal_working_dir
     });
 
     // 根据平台启动终端，传入提供商ID用于生成唯一的配置文件名
