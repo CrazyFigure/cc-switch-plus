@@ -14,7 +14,7 @@ fn deeplink_import_claude_provider_persists_to_db() {
     reset_test_fs();
     let _home = ensure_test_home();
 
-    let url = "ccswitch://v1/import?resource=provider&app=claude&name=DeepLink%20Claude&homepage=https%3A%2F%2Fexample.com&endpoint=https%3A%2F%2Fapi.example.com%2Fv1&apiKey=sk-test-claude-key&model=claude-sonnet-4&icon=claude";
+    let url = "ccswitchplus://v1/import?resource=provider&app=claude&name=DeepLink%20Claude&homepage=https%3A%2F%2Fexample.com&endpoint=https%3A%2F%2Fapi.example.com%2Fv1&apiKey=sk-test-claude-key&model=claude-sonnet-4&icon=claude";
     let request = parse_deeplink_url(url).expect("parse deeplink url");
 
     let db = Arc::new(Database::memory().expect("create memory db"));

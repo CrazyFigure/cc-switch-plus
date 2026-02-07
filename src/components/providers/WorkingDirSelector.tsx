@@ -35,7 +35,7 @@ export function WorkingDirSelector({
       <Folder className="w-4 h-4 text-muted-foreground flex-shrink-0" />
       <span
         className={cn(
-          "text-sm truncate max-w-[180px]",
+          "text-sm truncate max-w-[280px] direction-rtl text-left",
           !value && "text-muted-foreground italic"
         )}
         title={value || undefined}

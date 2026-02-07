@@ -10,7 +10,7 @@
       <string>CC Switch Deep Link</string>
       <key>CFBundleURLSchemes</key>
       <array>
-        <string>ccswitch</string>
+        <string>ccswitchplus</string>
       </array>
     </dict>
   </array>

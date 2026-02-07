@@ -1,6 +1,6 @@
 {
   "app": {
-    "title": "CC Switch",
+    "title": "CC Switch Plus",
     "description": "All-in-One Assistant for Claude Code, Codex & Gemini CLI"
   },
   "common": {
@@ -113,6 +113,10 @@
     "duplicate": "Duplicate",
     "sortUpdateFailed": "Failed to update sort order",
     "configureUsage": "Configure usage query",
+    "terminal": "Terminal",
+    "openTerminal": "Open Terminal",
+    "terminalOpened": "Terminal opened",
+    "terminalOpenFailed": "Failed to open terminal",
     "name": "Provider Name",
     "namePlaceholder": "e.g., Claude Official",
     "websiteUrl": "Website URL",

@@ -553,14 +553,22 @@ function App() {
     const { open } = await import("@tauri-apps/plugin-dialog");
     const selected = await open({ directory: true, multiple: false });
     if (selected) {
-      await settingsApi.update({ terminalWorkingDir: selected as string });
+      const currentSettings = await settingsApi.get();
+      await settingsApi.save({
+        ...currentSettings,
+        terminalWorkingDir: selected as string,
+      });
       await refetchSettings();
     }
   };
 
   // 清除工作目录
   const handleClearWorkingDir = async () => {
-    await settingsApi.update({ terminalWorkingDir: undefined });
+    const currentSettings = await settingsApi.get();
+    await settingsApi.save({
+      ...currentSettings,
+      terminalWorkingDir: undefined,
+    });
     await refetchSettings();
   };
 

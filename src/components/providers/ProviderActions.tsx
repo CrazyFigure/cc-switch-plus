@@ -38,6 +38,11 @@ interface ProviderActionsProps {
   onToggleFailover?: (enabled: boolean) => void;
 }
 
+// 判断应用是否支持终端功能
+const isTerminalSupported = (appId?: AppId): boolean => {
+  return appId === "claude" || appId === "codex";
+};
+
 export function ProviderActions({
   appId,
   isCurrent,
@@ -164,8 +169,28 @@ export function ProviderActions({
   // OpenCode 模式下删除按钮始终可用（主按钮"移除"是从 live 配置移除，删除是从数据库删除）
   const canDelete = isOpenCodeMode ? true : !isCurrent;
 
+  // 是否显示终端按钮（仅对 claude 和 codex 显示）
+  const showTerminalButton = isTerminalSupported(appId) && onOpenTerminal;
+
   return (
     <div className="flex items-center gap-1.5">
+      {/* 终端按钮 - 仅在 claude 和 codex 应用中显示，位于启用按钮左侧 */}
+      {showTerminalButton && (
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={onOpenTerminal}
+          title={t("provider.openTerminal", "打开终端")}
+          className={cn(
+            "px-2.5 gap-1.5",
+            "hover:text-emerald-600 hover:border-emerald-500/50 dark:hover:text-emerald-400",
+          )}
+        >
+          <Terminal className="h-4 w-4" />
+          <span className="hidden sm:inline">{t("provider.terminal", "终端")}</span>
+        </Button>
+      )}
+
       <Button
         size="sm"
         variant={buttonState.variant}
@@ -224,21 +249,6 @@ export function ProviderActions({
         >
           <BarChart3 className="h-4 w-4" />
         </Button>
-
-        {onOpenTerminal && (
-          <Button
-            size="icon"
-            variant="ghost"
-            onClick={onOpenTerminal}
-            title={t("provider.openTerminal", "打开终端")}
-            className={cn(
-              iconButtonClass,
-              "hover:text-emerald-600 dark:hover:text-emerald-400",
-            )}
-          >
-            <Terminal className="h-4 w-4" />
-          </Button>
-        )}
 
         <Button
           size="icon"
