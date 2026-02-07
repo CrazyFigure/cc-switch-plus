@@ -661,6 +661,7 @@ exec bash --norc --noprofile
         "alacritty" => launch_macos_open_app("Alacritty", &script_file, true),
         "kitty" => launch_macos_open_app("kitty", &script_file, false),
         "ghostty" => launch_macos_open_app("Ghostty", &script_file, true),
+        "wezterm" => launch_macos_open_app("WezTerm", &script_file, true),
         _ => launch_macos_terminal_app(&script_file), // "terminal" or default
     };
 
@@ -763,7 +764,7 @@ fn launch_macos_open_app(
 
     let output = cmd
         .output()
-        .map_err(|e| format!("启动 {} 失败: {e}", app_name))?;
+        .map_err(|e| format!("启动 {app_name} 失败: {e}"))?;
 
     if !output.status.success() {
         let stderr = String::from_utf8_lossy(&output.stderr);
@@ -1009,4 +1010,19 @@ fn run_windows_start_command(args: &[&str], terminal_name: &str) -> Result<(), S
     }
 
     Ok(())
+}
+
+/// 设置窗口主题（Windows/macOS 标题栏颜色）
+/// theme: "dark" | "light" | "system"
+#[tauri::command]
+pub async fn set_window_theme(window: tauri::Window, theme: String) -> Result<(), String> {
+    use tauri::Theme;
+
+    let tauri_theme = match theme.as_str() {
+        "dark" => Some(Theme::Dark),
+        "light" => Some(Theme::Light),
+        _ => None, // system default
+    };
+
+    window.set_theme(tauri_theme).map_err(|e| e.to_string())
 }

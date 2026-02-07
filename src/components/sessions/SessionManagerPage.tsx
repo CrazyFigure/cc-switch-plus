@@ -10,9 +10,7 @@ import {
   MessageSquare,
   Clock,
   FolderOpen,
-  Terminal,
   X,
-  SquareTerminal,
 } from "lucide-react";
 import { useSessionMessagesQuery, useSessionsQuery } from "@/lib/query";
 import { sessionsApi } from "@/lib/api";
@@ -24,7 +22,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -37,13 +34,6 @@ import {
 import { extractErrorMessage } from "@/utils/errorUtils";
 import { isMac } from "@/lib/platform";
 import { ProviderIcon } from "@/components/ProviderIcon";
-import {
-  AlacrittyIcon,
-  GhosttyIcon,
-  ITermIcon,
-  KittyIcon,
-  WezTermIcon,
-} from "@/components/icons/TerminalIcons";
 import { SessionItem } from "./SessionItem";
 import { SessionMessageItem } from "./SessionMessageItem";
 import { SessionTocDialog, SessionTocSidebar } from "./SessionToc";
@@ -56,16 +46,6 @@ import {
   getSessionKey,
 } from "./utils";
 
-const TERMINAL_TARGET_KEY = "session_manager_terminal_target";
-
-type TerminalTarget =
-  | "terminal"
-  | "iterm"
-  | "ghostty"
-  | "kitty"
-  | "wezterm"
-  | "alacritty";
-
 type ProviderFilter = "all" | "codex" | "claude";
 
 export function SessionManagerPage() {
@@ -76,7 +56,7 @@ export function SessionManagerPage() {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const messageRefs = useRef<Map<number, HTMLDivElement>>(new Map());
   const [activeMessageIndex, setActiveMessageIndex] = useState<number | null>(
-    null
+    null,
   );
   const [tocDialogOpen, setTocDialogOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -85,26 +65,6 @@ export function SessionManagerPage() {
   const [search, setSearch] = useState("");
   const [providerFilter, setProviderFilter] = useState<ProviderFilter>("all");
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
-  const [terminalTarget, setTerminalTarget] =
-    useState<TerminalTarget>("terminal");
-  const [isLoaded, setIsLoaded] = useState(false);
-
-  useEffect(() => {
-    const storedTarget = window.localStorage.getItem(
-      TERMINAL_TARGET_KEY
-    ) as TerminalTarget | null;
-    if (storedTarget) {
-      setTerminalTarget(storedTarget);
-    }
-
-    setIsLoaded(true);
-  }, []);
-
-  useEffect(() => {
-    if (isLoaded) {
-      window.localStorage.setItem(TERMINAL_TARGET_KEY, terminalTarget);
-    }
-  }, [terminalTarget, isLoaded]);
 
   // 使用 FlexSearch 全文搜索
   const { search: searchSessions } = useSessionSearch({
@@ -123,7 +83,7 @@ export function SessionManagerPage() {
     }
     const exists = selectedKey
       ? filteredSessions.some(
-          (session) => getSessionKey(session) === selectedKey
+          (session) => getSessionKey(session) === selectedKey,
         )
       : false;
     if (!exists) {
@@ -135,7 +95,7 @@ export function SessionManagerPage() {
     if (!selectedKey) return null;
     return (
       filteredSessions.find(
-        (session) => getSessionKey(session) === selectedKey
+        (session) => getSessionKey(session) === selectedKey,
       ) || null
     );
   }, [filteredSessions, selectedKey]);
@@ -143,7 +103,7 @@ export function SessionManagerPage() {
   const { data: messages = [], isLoading: isLoadingMessages } =
     useSessionMessagesQuery(
       selectedSession?.providerId,
-      selectedSession?.sourcePath
+      selectedSession?.sourcePath,
     );
 
   // 提取用户消息用于目录
@@ -187,7 +147,7 @@ export function SessionManagerPage() {
     } catch (error) {
       toast.error(
         extractErrorMessage(error) ||
-          t("common.error", { defaultValue: "Copy failed" })
+          t("common.error", { defaultValue: "Copy failed" }),
       );
     }
   };
@@ -198,14 +158,13 @@ export function SessionManagerPage() {
     if (!isMac()) {
       await handleCopy(
         selectedSession.resumeCommand,
-        t("sessionManager.resumeCommandCopied")
+        t("sessionManager.resumeCommandCopied"),
       );
       return;
     }
 
     try {
       await sessionsApi.launchTerminal({
-        target: terminalTarget,
         command: selectedSession.resumeCommand,
         cwd: selectedSession.projectDir ?? undefined,
       });
@@ -281,14 +240,16 @@ export function SessionManagerPage() {
                               setIsSearchOpen(true);
                               setTimeout(
                                 () => searchInputRef.current?.focus(),
-                                0
+                                0,
                               );
                             }}
                           >
                             <Search className="size-3.5" />
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent>搜索会话</TooltipContent>
+                        <TooltipContent>
+                          {t("sessionManager.searchSessions")}
+                        </TooltipContent>
                       </Tooltip>
 
                       <Select
@@ -428,7 +389,7 @@ export function SessionManagerPage() {
                               <span className="shrink-0">
                                 <ProviderIcon
                                   icon={getProviderIconName(
-                                    selectedSession.providerId
+                                    selectedSession.providerId,
                                   )}
                                   name={selectedSession.providerId}
                                   size={20}
@@ -451,7 +412,7 @@ export function SessionManagerPage() {
                             <span>
                               {formatTimestamp(
                                 selectedSession.lastActiveAt ??
-                                  selectedSession.createdAt
+                                  selectedSession.createdAt,
                               )}
                             </span>
                           </div>
@@ -463,7 +424,7 @@ export function SessionManagerPage() {
                                   onClick={() =>
                                     void handleCopy(
                                       selectedSession.projectDir!,
-                                      t("sessionManager.projectDirCopied")
+                                      t("sessionManager.projectDirCopied"),
                                     )
                                   }
                                   className="flex items-center gap-1 hover:text-foreground transition-colors"
@@ -482,7 +443,7 @@ export function SessionManagerPage() {
                                   {selectedSession.projectDir}
                                 </p>
                                 <p className="text-muted-foreground mt-1">
-                                  点击复制路径
+                                  {t("sessionManager.clickToCopyPath")}
                                 </p>
                               </TooltipContent>
                             </Tooltip>
@@ -493,84 +454,32 @@ export function SessionManagerPage() {
                       {/* 右侧：操作按钮组 */}
                       <div className="flex items-center gap-2 shrink-0">
                         {isMac() && (
-                          <>
-                            <Select
-                              value={terminalTarget}
-                              onValueChange={(value) =>
-                                setTerminalTarget(value as TerminalTarget)
-                              }
-                            >
-                              <SelectTrigger className="h-8 min-w-[110px] w-auto text-xs px-2.5">
-                                <Terminal className="size-3 mr-1.5" />
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent align="end">
-                                <SelectItem value="terminal">
-                                  <div className="flex items-center gap-2">
-                                    <SquareTerminal className="size-3.5" />
-                                    <span>Terminal</span>
-                                  </div>
-                                </SelectItem>
-                                <SelectItem value="iterm">
-                                  <div className="flex items-center gap-2">
-                                    <ITermIcon className="size-3.5" />
-                                    <span>iTerm2 (Untested)</span>
-                                  </div>
-                                </SelectItem>
-                                <SelectItem value="ghostty">
-                                  <div className="flex items-center gap-2">
-                                    <GhosttyIcon className="size-3.5" />
-                                    <span>Ghostty</span>
-                                  </div>
-                                </SelectItem>
-                                <SelectItem value="kitty">
-                                  <div className="flex items-center gap-2">
-                                    <KittyIcon className="size-3.5" />
-                                    <span>Kitty</span>
-                                  </div>
-                                </SelectItem>
-                                <SelectItem value="wezterm">
-                                  <div className="flex items-center gap-2">
-                                    <WezTermIcon className="size-3.5" />
-                                    <span>WezTerm (Untested)</span>
-                                  </div>
-                                </SelectItem>
-                                <SelectItem value="alacritty">
-                                  <div className="flex items-center gap-2">
-                                    <AlacrittyIcon className="size-3.5" />
-                                    <span>Alacritty (Untested)</span>
-                                  </div>
-                                </SelectItem>
-                              </SelectContent>
-                            </Select>
-
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button
-                                  size="sm"
-                                  className="gap-1.5"
-                                  onClick={() => void handleResume()}
-                                  disabled={!selectedSession.resumeCommand}
-                                >
-                                  <Play className="size-3.5" />
-                                  <span className="hidden sm:inline">
-                                    {t("sessionManager.resume", {
-                                      defaultValue: "恢复会话",
-                                    })}
-                                  </span>
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                {selectedSession.resumeCommand
-                                  ? t("sessionManager.resumeTooltip", {
-                                      defaultValue: "在终端中恢复此会话",
-                                    })
-                                  : t("sessionManager.noResumeCommand", {
-                                      defaultValue: "此会话无法恢复",
-                                    })}
-                              </TooltipContent>
-                            </Tooltip>
-                          </>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                size="sm"
+                                className="gap-1.5"
+                                onClick={() => void handleResume()}
+                                disabled={!selectedSession.resumeCommand}
+                              >
+                                <Play className="size-3.5" />
+                                <span className="hidden sm:inline">
+                                  {t("sessionManager.resume", {
+                                    defaultValue: "恢复会话",
+                                  })}
+                                </span>
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              {selectedSession.resumeCommand
+                                ? t("sessionManager.resumeTooltip", {
+                                    defaultValue: "在终端中恢复此会话",
+                                  })
+                                : t("sessionManager.noResumeCommand", {
+                                    defaultValue: "此会话无法恢复",
+                                  })}
+                            </TooltipContent>
+                          </Tooltip>
                         )}
                       </div>
                     </div>
@@ -590,7 +499,7 @@ export function SessionManagerPage() {
                               onClick={() =>
                                 void handleCopy(
                                   selectedSession.resumeCommand!,
-                                  t("sessionManager.resumeCommandCopied")
+                                  t("sessionManager.resumeCommandCopied"),
                                 )
                               }
                             >
@@ -652,7 +561,7 @@ export function SessionManagerPage() {
                                       content,
                                       t("sessionManager.messageCopied", {
                                         defaultValue: "已复制消息内容",
-                                      })
+                                      }),
                                     )
                                   }
                                 />

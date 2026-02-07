@@ -20,8 +20,8 @@ mod prompt_files;
 mod provider;
 mod provider_defaults;
 mod proxy;
-mod session_manager;
 mod services;
+mod session_manager;
 mod settings;
 mod store;
 mod tray;
@@ -956,6 +956,8 @@ pub fn run() {
             commands::test_proxy_url,
             commands::get_upstream_proxy_status,
             commands::scan_local_proxies,
+            // Window theme control
+            commands::set_window_theme,
         ]);
 
     let app = builder

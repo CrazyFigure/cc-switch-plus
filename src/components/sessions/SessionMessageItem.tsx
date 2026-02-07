@@ -37,7 +37,7 @@ export function SessionMessageItem({
           : message.role.toLowerCase() === "assistant"
             ? "bg-blue-500/5 border-blue-500/20 mr-8"
             : "bg-muted/40 border-border/60",
-        isActive && "ring-2 ring-primary ring-offset-2"
+        isActive && "ring-2 ring-primary ring-offset-2",
       )}
     >
       <Tooltip>
@@ -59,7 +59,7 @@ export function SessionMessageItem({
       </Tooltip>
       <div className="flex items-center justify-between text-xs mb-1.5 pr-6">
         <span className={cn("font-semibold", getRoleTone(message.role))}>
-          {getRoleLabel(message.role)}
+          {getRoleLabel(message.role, t)}
         </span>
         {message.ts && (
           <span className="text-muted-foreground">
